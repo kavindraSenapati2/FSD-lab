@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      background: #f0f2ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Decorative blobs */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px; left: -200px;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #c7d2fe 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -150px; right: -150px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fde68a 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob-mid {
+      position: fixed;
+      top: 40%; right: -100px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fbcfe8 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Card */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 2.8rem 2.5rem 2.5rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 20px 60px rgba(99,102,241,0.12), 0 4px 16px rgba(0,0,0,0.06);
+      animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    @keyframes popUp {
+      from { opacity: 0; transform: scale(0.94) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Top accent bar */
+    .accent-bar {
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 4px;
+      background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b);
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .avatar {
+      width: 64px; height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 1.2rem;
+      box-shadow: 0 8px 20px rgba(99,102,241,0.35);
+    }
+
+    .header h1 {
+      font-size: 1.65rem;
+      font-weight: 900;
+      color: #1e1b4b;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.3rem;
+    }
+
+    .header p {
+      font-size: 0.88rem;
+      color: #9ca3af;
+      font-weight: 400;
+    }
+
+    /* Fields */
+    .field { margin-bottom: 1.15rem; }
+
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.45rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #374151;
+      letter-spacing: 0.01em;
+    }
+
+    .badge {
+      font-size: 0.68rem;
+      color: #6366f1;
+      background: #eef2ff;
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-weight: 500;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      background: #f9fafb;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      overflow: hidden;
+    }
+
+    .input-row:focus-within {
+      border-color: #6366f1;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
+    }
+
+    .input-row.err {
+      border-color: #ef4444;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(239,68,68,0.08);
+      animation: shake 0.3s ease;
+    }
+
+    .input-row.ok {
+      border-color: #10b981;
+      background: #f0fdf4;
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+
+    .icon {
+      padding: 0 0.75rem 0 1rem;
+      font-size: 1.05rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #111827;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.93rem;
+      font-weight: 500;
+      padding: 0.78rem 1rem 0.78rem 0;
+    }
+
+    input::placeholder { color: #d1d5db; font-weight: 400; }
+
+    /* Error message */
+    .err-msg {
+      font-size: 0.75rem;
+      color: #ef4444;
+      margin-top: 0.32rem;
+      padding-left: 4px;
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+    .err-msg.show { display: flex; animation: slide 0.2s ease; }
+
+    @keyframes slide {
+      from { opacity: 0; transform: translateY(-3px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Password meter */
+    .meter {
+      display: flex;
+      gap: 5px;
+      margin-top: 0.45rem;
+      height: 4px;
+    }
+
+    .seg {
+      flex: 1;
+      border-radius: 4px;
+      background: #e5e7eb;
+      transition: background 0.3s;
+    }
+
+    .pw-hint {
+      font-size: 0.72rem;
+      color: #9ca3af;
+      margin-top: 0.28rem;
+    }
+
+    /* Submit */
+    .btn {
+      width: 100%;
+      margin-top: 1.4rem;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(99,102,241,0.45);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Success */
+    .success {
+      display: none;
+      margin-top: 1.2rem;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border: 1.5px solid #6ee7b7;
+      padding: 1rem 1.2rem;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .success.show { display: flex; animation: popUp 0.4s ease both; }
+
+    .success-icon { font-size: 1.5rem; flex-shrink: 0; }
+
+    .success strong {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #065f46;
+    }
+
+    .success span {
+      font-size: 0.76rem;
+      color: #059669;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: #d1d5db;
+    }
+
+    .footer a { color: #6366f1; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<div class="blob-mid"></div>
+
+<div class="card">
+  <div class="accent-bar"></div>
+
+  <div class="header">
+    <div class="avatar">🎓</div>
+    <h1>Student Registration</h1>
+    <p>Fill in your details to create an account</p>
+  </div>
+
+  <form id="regForm" onsubmit="return validateForm()" novalidate>
+
+    <!-- Name -->
+    <div class="field">
+      <div class="field-label"><label for="name">Full Name</label></div>
+      <div class="input-row" id="row-name">
+        <span class="icon">👤</span>
+        <input type="text" id="name" placeholder="e.g. Rahul Sharma" autocomplete="off">
+      </div>
+      <div class="err-msg" id="nameErr">⚠ Name must not be empty.</div>
+    </div>
+
+    <!-- Email -->
+    <div class="field">
+      <div class="field-label"><label for="email">Email Address</label></div>
+      <div class="input-row" id="row-email">
+        <span class="icon">✉️</span>
+        <input type="text" id="email" placeholder="you@example.com" autocomplete="off">
+      </div>
+      <div class="err-msg" id="emailErr">⚠ Enter a valid email address.</div>
+    </div>
+
+    <!-- Password -->
+    <div class="field">
+      <div class="field-label">
+        <label for="password">Password</label>
+        <span class="badge">min 6 chars</span>
+      </div>
+      <div class="input-row" id="row-password">
+        <span class="icon">🔑</span>
+        <input type="password" id="password" placeholder="Create a password" oninput="checkStrength()">
+      </div>
+      <div class="meter">
+        <div class="seg" id="s1"></div>
+        <div class="seg" id="s2"></div>
+        <div class="seg" id="s3"></div>
+        <div class="seg" id="s4"></div>
+        <div class="seg" id="s5"></div>
+      </div>
+      <div class="pw-hint" id="pwHint">Password strength indicator</div>
+      <div class="err-msg" id="passErr">⚠ Password must be at least 6 characters.</div>
+    </div>
+
+    <!-- Mobile -->
+    <div class="field">
+      <div class="field-label">
+        <label for="mobile">Mobile Number</label>
+        <span class="badge">10 digits</span>
+      </div>
+      <div class="input-row" id="row-mobile">
+        <span class="icon">📱</span>
+        <input type="text" id="mobile" placeholder="10-digit number" maxlength="10" autocomplete="off">
+      </div>
+      <div class="err-msg" id="mobileErr">⚠ Enter a valid 10-digit mobile number.</div>
+    </div>
+
+    <button type="submit" class="btn" id="submitBtn">Create Account →</button>
+
+    <div class="success" id="successBox">
+      <div class="success-icon">🎉</div>
+      <div>
+        <strong>Registration Successful!</strong>
+        <span>Your account has been created.</span>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="footer">Already have an account? <a href="#">Sign in</a></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
